@@ -23,6 +23,19 @@
                     </div>
                 </div>
             </div>
+        <div class="navbar-nav">
+            {% if app.user %}
+                <span class="nav-link text-white me-3">👤 {{ app.user.userIdentifier }}</span>
+                <a class="btn btn-outline-danger btn-sm" href="{{ path('app_logout') }}">Déconnexion</a>
+            {% else %}
+                <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+                <a class="btn btn-primary btn-sm ms-2" href="{{ path('app_register') }}">Inscription</a>
+            {% endif %}
+        </div>
+
+
+
+
         </nav>
 
         <div class="container bg-white p-4 shadow-sm rounded">
