@@ -23,9 +23,12 @@
 
     {# Boutons d'action #}
     <div class="d-flex gap-2 align-items-center">
+
+    {% if app.user == article.auteurUser or is_granted('ROLE_ADMIN') %}
         <a href="{{ path('app_article_modifier', {id: article.id}) }}" class="btn btn-primary">
             ✏️ Modifier
         </a>
+    {% endif %}
         
         <form method="post" action="{{ path('app_article_supprimer', {id: article.id}) }}"
               onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');" class="d-inline">

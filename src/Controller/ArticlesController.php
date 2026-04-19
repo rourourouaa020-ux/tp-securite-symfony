@@ -24,6 +24,7 @@ class ArticlesController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $article->setDateCreation(new \DateTime());
+            $article->setAuteurUser($this->getUser());
             $em->persist($article);
             $em->flush();
 
@@ -58,7 +59,18 @@ class ArticlesController extends AbstractController
     #[Route('/articles/{id}/modifier', name: 'app_article_modifier', requirements: ['id' => '\d+'])]
     public function modifier(Article $article, Request $request, EntityManagerInterface $em): Response
     {
-        $form = $this->createForm(ArticleType::class, $article);
+
+
+
+$user = $this->getUser();
+
+    // ❌ Si ce n’est pas l’auteur ET pas admin
+   if ($article->getAuteurUser() !== $this->getUser() 
+    && !$this->isGranted('ROLE_ADMIN')) {
+    throw $this->createAccessDeniedException('Vous n\'êtes pas l\'auteur !');
+}
+
+       $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

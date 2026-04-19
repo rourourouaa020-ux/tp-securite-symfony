@@ -3,32 +3,63 @@
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-body p-5">
-                    <h1 class="h3 mb-4 font-weight-normal text-center">Créer un compte</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow border-0">
+            <div class="card-body p-5">
 
-                    {{ form_errors(registrationForm) }}
+                <h1 class="h3 mb-4 text-center fw-bold">Créer un compte</h1>
 
-                    {{ form_start(registrationForm) }}
-                        <div class="mb-3">
-                            {{ form_row(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_row(registrationForm.plainPassword, {
-                                'label': 'Mot de passe',
-                                'attr': {'class': 'form-control'}
-                            }) }}
-                        </div>
-                        <div class="form-check mb-3">
-                            {{ form_row(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
-                        </div>
+                {{ form_errors(registrationForm) }}
 
-                        <button type="submit" class="btn btn-primary w-100 py-2 mt-3">S'inscrire</button>
-                    {{ form_end(registrationForm) }}
+                {{ form_start(registrationForm) }}
+
+                <!-- EMAIL -->
+                <div class="mb-3">
+                    {{ form_label(registrationForm.email) }}
+                    {{ form_widget(registrationForm.email, {
+                        'attr': {'class': 'form-control', 'placeholder': 'exemple@email.com'}
+                    }) }}
+                    {{ form_errors(registrationForm.email) }}
                 </div>
+
+                <!-- PSEUDO (AJOUT PROPRE) -->
+                <div class="mb-3">
+                    {{ form_label(registrationForm.pseudo) }}
+                    {{ form_widget(registrationForm.pseudo, {
+                        'attr': {'class': 'form-control', 'placeholder': 'Votre pseudo'}
+                    }) }}
+                    {{ form_errors(registrationForm.pseudo) }}
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="mb-3">
+                    {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+                    {{ form_widget(registrationForm.plainPassword, {
+                        'attr': {'class': 'form-control'}
+                    }) }}
+                    {{ form_errors(registrationForm.plainPassword) }}
+                </div>
+
+                <!-- CHECKBOX -->
+                <div class="form-check mb-3">
+                    {{ form_widget(registrationForm.agreeTerms, {
+                        'attr': {'class': 'form-check-input'}
+                    }) }}
+                    {{ form_label(registrationForm.agreeTerms, null, {
+                        'label_attr': {'class': 'form-check-label'}
+                    }) }}
+                    {{ form_errors(registrationForm.agreeTerms) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2">
+                    S'inscrire
+                </button>
+
+                {{ form_end(registrationForm) }}
+
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

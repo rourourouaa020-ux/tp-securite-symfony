@@ -27,4 +27,26 @@ class AccueilController extends AbstractController
     {
         return new Response("<h1>Profil de l'utilisateur n°$id</h1>");
     }
+
+    use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/test-email', name: 'app_test_email')]
+public function testEmail(MailerInterface $mailer): Response
+{
+    $email = (new Email())
+        ->from('noreply@monsite.com')
+        ->to('etudiant@exemple.com')
+        ->subject('🎉 Test Email depuis Symfony !')
+        ->text('Ceci est un email de test envoyé depuis Symfony avec Mailtrap.')
+        ->html('<h1>Bravo !</h1><p>Votre configuration Mailtrap fonctionne correctement. 🚀</p>');
+
+    $mailer->send($email);
+
+    $this->addFlash('success', 'Email envoyé avec succès ! Vérifiez votre boîte Mailtrap.');
+
+    return $this->redirectToRoute('app_article_index');
+}
 }
