@@ -5,6 +5,9 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email; 
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class AccueilController extends AbstractController
 {
@@ -28,25 +31,26 @@ class AccueilController extends AbstractController
         return new Response("<h1>Profil de l'utilisateur n°$id</h1>");
     }
 
-    use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-
-#[Route('/test-email', name: 'app_test_email')]
-public function testEmail(MailerInterface $mailer): Response
+    #[Route('/test-email-twig', name: 'app_test_email_twig')]
+public function testEmailTwig(MailerInterface $mailer): Response
 {
-    $email = (new Email())
+    $email = (new TemplatedEmail())
         ->from('noreply@monsite.com')
         ->to('etudiant@exemple.com')
-        ->subject('🎉 Test Email depuis Symfony !')
-        ->text('Ceci est un email de test envoyé depuis Symfony avec Mailtrap.')
-        ->html('<h1>Bravo !</h1><p>Votre configuration Mailtrap fonctionne correctement. 🚀</p>');
+        ->subject('Nouvel article publié !')
+        ->htmlTemplate('emails/notification.html.twig')
+        ->context([
+            'subject' => 'Nouvel article publié !',
+            'message' => 'Un nouveau contenu vient d\'être ajouté sur le blog.',
+        ]);
 
     $mailer->send($email);
 
-    $this->addFlash('success', 'Email envoyé avec succès ! Vérifiez votre boîte Mailtrap.');
+    $this->addFlash('success', 'Email Twig envoyé ! Vérifiez Mailtrap.');
 
-    return $this->redirectToRoute('app_article_index');
+    return $this->redirectToRoute('app_accueil');
 }
+
+
+
 }
