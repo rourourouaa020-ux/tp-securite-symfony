@@ -16,6 +16,13 @@
             <a href="{{ path('app_article_nouveau') }}" class="alert-link">Créer un article</a>
         </div>
     {% else %}
+        <p>derniers 3 articles publié : </p>
+
+    {% for article in derniersArticles %}
+    <p>{{ article.titre }}</p>
+{% else %}
+    <p>Aucun article publié</p>
+{% endfor %}
         <div class="table-responsive">
             <table class="table table-bordered table-hover mt-4">
                 <thead class="table-dark text-center">

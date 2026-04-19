@@ -42,9 +42,13 @@ class ArticlesController extends AbstractController
     public function index(ArticleRepository $articleRepository): Response
     {
         $articles = $articleRepository->findAll();
+            $derniersArticles = $articleRepository->findLastPublished(3);
+
 
         return $this->render('articles/index.html.twig', [
             'articles' => $articles,
+                    'derniersArticles' => $derniersArticles
+
         ]);
     }
 
@@ -100,4 +104,10 @@ $user = $this->getUser();
 
         return $this->redirectToRoute('app_articles');
     }
+
+ 
+    
+
+
+    
 }

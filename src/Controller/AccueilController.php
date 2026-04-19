@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,12 +13,26 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 class AccueilController extends AbstractController
 {
     #[Route('/accueil', name: 'app_accueil')]
-    public function index(): Response
-    {
-        return $this->render('accueil/index.html.twig', [
-            'controller_name' => 'AccueilController',
-        ]);
-    }
+public function index(RequestStack $requestStack): Response
+{
+    $session = $requestStack->getSession();
+    
+    // Lire le nombre de visites (0 si première fois)
+    $nbVisites = $session->get('nb_visites', 0);
+    
+    // Incrémenter
+    $nbVisites++;
+    
+    // Sauvegarder
+    $session->set('nb_visites', $nbVisites);
+    
+    return $this->render('accueil/index.html.twig', [
+        'controller_name' => 'AccueilController',
+        'nb_visites' => $nbVisites
+    ]);
+}
+
+
 
     #[Route('/bonjour/{prenom}', name: 'app_bonjour')]
     public function bonjour(string $prenom): Response
@@ -30,6 +45,19 @@ class AccueilController extends AbstractController
     {
         return new Response("<h1>Profil de l'utilisateur n°$id</h1>");
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     #[Route('/test-email-twig', name: 'app_test_email_twig')]
 public function testEmailTwig(MailerInterface $mailer): Response

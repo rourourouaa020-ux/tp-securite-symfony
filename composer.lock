@@ -1970,16 +1970,16 @@
         },
         {
             "name": "symfony/asset-mapper",
-            "version": "v7.4.6",
+            "version": "v7.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/asset-mapper.git",
-                "reference": "87b67d12754132339414a1eb7fd1f6640f4f71b6"
+                "reference": "752bb3e9662b226ca87dd55fdbc58300a6eec462"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/asset-mapper/zipball/87b67d12754132339414a1eb7fd1f6640f4f71b6",
-                "reference": "87b67d12754132339414a1eb7fd1f6640f4f71b6",
+                "url": "https://api.github.com/repos/symfony/asset-mapper/zipball/752bb3e9662b226ca87dd55fdbc58300a6eec462",
+                "reference": "752bb3e9662b226ca87dd55fdbc58300a6eec462",
                 "shasum": ""
             },
             "require": {
@@ -2031,7 +2031,7 @@
             "description": "Maps directories of assets & makes them available in a public directory with versioned filenames.",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/asset-mapper/tree/v7.4.6"
+                "source": "https://github.com/symfony/asset-mapper/tree/v7.4.8"
             },
             "funding": [
                 {
@@ -2051,7 +2051,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-17T07:53:42+00:00"
+            "time": "2026-03-24T13:12:05+00:00"
         },
         {
             "name": "symfony/cache",
