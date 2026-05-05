@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
+use App\Service\TextFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,18 +14,30 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ArticlesController extends AbstractController
 {
+    private TextFormatter $formatter;
+
+    public function __construct(TextFormatter $formatter)
+    {
+        $this->formatter = $formatter;
+    }
+
     #[Route('/articles/nouveau', name: 'app_article_nouveau')]
     public function nouveau(Request $request, EntityManagerInterface $em): Response
     {
         $article = new Article();
 
         $form = $this->createForm(ArticleType::class, $article);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $article->setContenu(
+                $this->formatter->filter($article->getContenu())
+            );
+
             $article->setDateCreation(new \DateTime());
             $article->setAuteurUser($this->getUser());
+
             $em->persist($article);
             $em->flush();
 
@@ -41,14 +54,9 @@ class ArticlesController extends AbstractController
     #[Route('/articles', name: 'app_articles')]
     public function index(ArticleRepository $articleRepository): Response
     {
-        $articles = $articleRepository->findAll();
-            $derniersArticles = $articleRepository->findLastPublished(3);
-
-
         return $this->render('articles/index.html.twig', [
-            'articles' => $articles,
-                    'derniersArticles' => $derniersArticles
-
+            'articles' => $articleRepository->findAll(),
+            'derniersArticles' => $articleRepository->findLastPublished(3),
         ]);
     }
 
@@ -63,25 +71,24 @@ class ArticlesController extends AbstractController
     #[Route('/articles/{id}/modifier', name: 'app_article_modifier', requirements: ['id' => '\d+'])]
     public function modifier(Article $article, Request $request, EntityManagerInterface $em): Response
     {
+        if ($article->getAuteurUser() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas l\'auteur !');
+        }
 
-
-
-$user = $this->getUser();
-
-    // ❌ Si ce n’est pas l’auteur ET pas admin
-   if ($article->getAuteurUser() !== $this->getUser() 
-    && !$this->isGranted('ROLE_ADMIN')) {
-    throw $this->createAccessDeniedException('Vous n\'êtes pas l\'auteur !');
-}
-
-       $form = $this->createForm(ArticleType::class, $article);
+        $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $article->setContenu(
+                $this->formatter->filter($article->getContenu())
+            );
+
             $em->flush();
 
-            $this->addFlash('success', 'Article modifié avec succès !');
-            return $this->redirectToRoute('app_article_detail', ['id' => $article->getId()]);
+            return $this->redirectToRoute('app_article_detail', [
+                'id' => $article->getId()
+            ]);
         }
 
         return $this->render('articles/modifier.html.twig', [
@@ -90,24 +97,14 @@ $user = $this->getUser();
         ]);
     }
 
-    #[Route('/articles/{id}/supprimer', name: 'app_article_supprimer', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/articles/{id}/supprimer', name: 'app_article_supprimer', methods: ['POST'])]
     public function supprimer(Article $article, Request $request, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('supprimer_' . $article->getId(), $request->request->get('_token'))) {
             $em->remove($article);
             $em->flush();
-
-            $this->addFlash('success', 'Article supprimé avec succès.');
-        } else {
-            $this->addFlash('danger', 'Token CSRF invalide. Suppression annulée.');
         }
 
         return $this->redirectToRoute('app_articles');
     }
-
- 
-    
-
-
-    
 }
